@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
 import {TaskRow} from './components/TaskRow';
 import {TaskBanner} from './components/TaskBanner';
-function App() {
+import{TaskCreator} from './components/TaskCreator';
+import {VisibilityContro} from './components/VisibilityControl';
 
+function App() {
   const [userName, setuserName] = useState('Karina');
   const [TaskItems, setTaskItems] = useState([
     {name: 'Task one', done: true},
@@ -10,6 +12,15 @@ function App() {
     {name: 'Task three', done: true},
     {name: 'Task four', done: false}
   ])
+  const [showCompleted, setshowCompleted] = useState(true);
+
+
+  const createNewTasks = taskName =>{
+    if(!TaskItems.find(t=> t.name === taskName)){
+      setTaskItems([... TaskItems,{name: taskName , done:false}]) /*Agrega una tarea nueva */
+    }
+  } 
+
   const toggleTask =task =>
     setTaskItems( TaskItems.map(t => (t.name === task.name ? {...t, done: !t.done}: t)))
 
@@ -21,7 +32,8 @@ function App() {
   return (
     <div>
       <TaskBanner userName = {userName} /*Pasando el nombre del usuario*/TaskItems= {TaskItems} /*Pasando todas las tareas*/></TaskBanner>
-      <table className="table table-striped table-border">
+      <TaskCreator callback={createNewTasks}></TaskCreator>
+      <table className="table table-striped table-border table-hover">
         <thead>
           <tr>
             <th>Description</th>
@@ -32,6 +44,20 @@ function App() {
           {taskTableRows()/*llama a la funcion */} 
         </tbody>
       </table>
+
+      <div className="bg-secondary-text-white text-center p-2">
+        <VisibilityContro description="Completed Task" isChecked={showCompleted}
+        callback={checked => setshowCompleted(checked)}></VisibilityContro>
+      </div>
+
+      {
+        showCompleted && (
+          <table className="table table-striped table-border table-hover"> 
+
+          </table>
+        )
+      }
+
     </div>
   );
 }
